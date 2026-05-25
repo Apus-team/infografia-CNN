@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Infografía CRISP-ML | CNN MNIST y Fashion-MNIST</title>
+
+  <style>
+    :root {
+      --azul: #2563eb;
+      --azul-oscuro: #0f172a;
+      --celeste: #dbeafe;
+      --morado: #7c3aed;
+      --rosado: #ec4899;
+      --verde: #16a34a;
+      --naranja: #f97316;
+      --rojo: #ef4444;
+      --gris: #64748b;
+      --fondo: #f8fafc;
+      --blanco: #ffffff;
+      --borde: #e2e8f0;
+      --sombra: 0 14px 35px rgba(15, 23, 42, 0.12);
+      --radio: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(37, 99, 235, 0.18), transparent 32%),
+        radial-gradient(circle at 90% 10%, rgba(236, 72, 153, 0.13), transparent 30%),
+        linear-gradient(180deg, #ffffff 0%, #f8fafc 40%, #eef2ff 100%);
+      color: #1e293b;
+    }
+
+    .contenedor {
+      width: 94%;
+      max-width: 1200px;
+      margin: auto;
+      padding: 30px 0 60px;
+    }
+
+    .portada {
+      display: grid;
+      grid-template-columns: 1.4fr 0.6fr;
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0f172a, #1d4ed8, #7c3aed);
+      color: white;
+      padding: 38px;
+      border-radius: 34px;
+      box-shadow: var(--sombra);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      width: 260px;
+      height: 260px;
+      background: rgba(255,255,255,0.13);
+      position: absolute;
+      top: -80px;
+      right: -70px;
+      border-radius: 50%;
+    }
+
+    .etiqueta {
+      display: inline-block;
+      padding: 9px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.16);
+      border: 1px solid rgba(255,255,255,0.28);
+      font-size: 13px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 56px;
+      line-height: 0.95;
+      letter-spacing: -2px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .subtitulo {
+      margin-top: 18px;
+      max-width: 760px;
+      font-size: 18px;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.88);
+      position: relative;
+      z-index: 1;
+    }
+
+    .tarjeta-lateral {
+      background: var(--blanco);
+      border: 1px solid var(--borde);
+      border-radius: 34px;
+      box-shadow: var(--sombra);
+      padding: 28px;
+    }
+
+    .tarjeta-lateral h2 {
+      margin-top: 0;
+      font-size: 28px;
+    }
+
+    .mini-item {
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 13px;
+      background: #f8fafc;
+      border: 1px solid var(--borde);
+      border-radius: 18px;
+      margin-bottom: 12px;
+    }
+
+    .icono {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #dbeafe, #ede9fe);
+      font-size: 25px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 26px 0;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: 22px;
+      box-shadow: 0 10px 25px rgba(15,23,42,0.08);
+      text-align: center;
+    }
+
+    .stat strong {
+      display: block;
+      font-size: 34px;
+      color: var(--azul);
+      margin-bottom: 6px;
+    }
+
+    .stat span {
+      font-size: 14px;
+      color: var(--gris);
+      font-weight: bold;
+    }
+
+    section {
+      margin: 34px 0;
+    }
+
+    .titulo-seccion {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .punto {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--azul);
+      box-shadow: 0 0 0 8px rgba(37,99,235,0.13);
+    }
+
+    .titulo-seccion h2 {
+      margin: 0;
+      font-size: 32px;
+      letter-spacing: -0.6px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .tarjeta {
+      background: rgba(255,255,255,0.92);
+      border: 1px solid var(--borde);
+      border-radius: var(--radio);
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.08);
+    }
+
+    .tarjeta h3 {
+      margin: 0 0 10px;
+      font-size: 23px;
+    }
+
+    .tarjeta p {
+      margin: 0;
+      color: var(--gris);
+      line-height: 1.6;
+    }
+
+    .crisp {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 12px;
+    }
+
+    .fase {
+      background: white;
+      border: 1px solid var(--borde);
+      border-radius: 22px;
+      padding: 18px;
+      min-height: 180px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .fase::before {
+      content: attr(data-num);
+      position: absolute;
+      top: 4px;
+      right: 12px;
+      font-size: 58px;
+      font-weight: 900;
+      color: rgba(37,99,235,0.08);
+    }
+
+    .fase b {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 17px;
+    }
+
+    .fase span {
+      color: var(--gris);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .dataset-visual {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .pixel-card {
+      background: #0f172a;
+      color: white;
+      border-radius: 14px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      font-size: 30px;
+      font-weight: bold;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.08);
+    }
+
+    .fashion-card {
+      background: linear-gradient(135deg, #fce7f3, #ede9fe);
+      color: #111827;
+      border-radius: 14px;
+      height: 72px;
+      display: grid;
+      place-items: center;
+      font-size: 31px;
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55);
+    }
+
+    .arquitectura {
+      background: #0f172a;
+      color: white;
+      border-radius: 30px;
+      padding: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      box-shadow: var(--sombra);
+    }
+
+    .capa {
+      flex: 1;
+      min-width: 130px;
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.10);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .capa b {
+      display: block;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .capa small {
+      color: rgba(255,255,255,0.7);
+      line-height: 1.35;
+    }
+
+    .flecha {
+      font-size: 24px;
+      color: rgba(255,255,255,0.55);
+      font-weight: bold;
+    }
+
+    .resultado {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 18px 0 8px;
+    }
+
+    .resultado .numero {
+      font-size: 42px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+
+    .resultado .label {
+      color: var(--gris);
+      font-size: 13px;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .barra {
+      height: 14px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 10px 0 4px;
+    }
+
+    .barra i {
+      height: 100%;
+      display: block;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--azul), var(--morado));
+    }
+
+    .barra.verde i {
+      background: linear-gradient(90deg, var(--verde), #84cc16);
+    }
+
+    .barra.naranja i {
+      background: linear-gradient(90deg, var(--naranja), var(--rosado));
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 16px;
+      background: white;
+      font-size: 14px;
+    }
+
+    th {
+      background: #0f172a;
+      color: white;
+      text-align: left;
+      padding: 12px;
+    }
+
+    td {
+      padding: 12px;
+      border-bottom: 1px solid var(--borde);
+      color: #334155;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .alerta {
+      display: grid;
+      grid-template-columns: 90px 1fr;
+      gap: 18px;
+      align-items: center;
+      background: linear-gradient(135deg, #eff6ff, #faf5ff);
+      border: 1px solid #c7d2fe;
+      border-radius: var(--radio);
+      padding: 24px;
+    }
+
+    .alerta-icono {
+      width: 90px;
+      height: 90px;
+      display: grid;
+      place-items: center;
+      border-radius: 26px;
+      background: white;
+      box-shadow: 0 12px 28px rgba(37,99,235,0.12);
+      font-size: 45px;
+    }
+
+    .lista {
+      margin: 12px 0 0;
+      padding-left: 20px;
+      color: var(--gris);
+      line-height: 1.65;
+    }
+
+    .codigo {
+      background: #020617;
+      color: #e2e8f0;
+      padding: 22px;
+      border-radius: 22px;
+      overflow-x: auto;
+      font-size: 13px;
+      line-height: 1.55;
+      box-shadow: var(--sombra);
+    }
+
+    .boton-print {
+      position: fixed;
+      right: 20px;
+      bottom: 20px;
+      background: #0f172a;
+      color: white;
+      border: none;
+      padding: 14px 18px;
+      border-radius: 999px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: var(--sombra);
+      z-index: 10;
+    }
+
+    .pie {
+      text-align: center;
+      margin-top: 34px;
+      color: var(--gris);
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .portada,
+      .grid-2,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .crisp {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      h1 {
+        font-size: 42px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .stats,
+      .crisp {
+        grid-template-columns: 1fr;
+      }
+
+      .alerta {
+        grid-template-columns: 1fr;
+      }
+
+      .boton-print {
+        display: none;
+      }
+
+      .hero {
+        padding: 26px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .boton-print {
+        display: none;
+      }
+
+      .tarjeta,
+      .stat,
+      .hero,
+      .tarjeta-lateral,
+      .arquitectura {
+        box-shadow: none;
+      }
+
+      section {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <button class="boton-print" onclick="window.print()">Imprimir / PDF</button>
+
+  <main class="contenedor">
+
+    <div class="portada">
+      <div class="hero">
+        <div class="etiqueta">CRISP-ML + CNN | APUS TEAM</div>
+        <h1>Clasificación de imágenes con CNN</h1>
+        <p class="subtitulo">
+          Infografía visual basada en el Colab <b>TALLER_3_2_CNN_APUS_TEAM</b>.
+          Se aplicó una Red Neuronal Convolucional para clasificar imágenes de
+          <b>MNIST</b> y <b>Fashion-MNIST</b>, siguiendo la metodología CRISP-ML.
+        </p>
+      </div>
+
+      <aside class="tarjeta-lateral">
+        <h2>¿Qué se hizo?</h2>
+
+        <div class="mini-item">
+          <div class="icono">🔢</div>
+          <div>
+            <b>MNIST</b><br>
+            <span>Reconocimiento de dígitos escritos a mano.</span>
+          </div>
+        </div>
+
+        <div class="mini-item">
+          <div class="icono">👕</div>
+          <div>
+            <b>Fashion-MNIST</b><br>
+            <span>Clasificación de prendas y accesorios.</span>
+          </div>
+        </div>
+
+        <div class="mini-item">
+          <div class="icono">🧠</div>
+          <div>
+            <b>CNN</b><br>
+            <span>Modelo de visión artificial con capas convolucionales.</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <strong>70 000</strong>
+        <span>imágenes por dataset</span>
+      </div>
+
+      <div class="stat">
+        <strong>28×28</strong>
+        <span>tamaño de imagen</span>
+      </div>
+
+      <div class="stat">
+        <strong>10</strong>
+        <span>clases de salida</span>
+      </div>
+
+      <div class="stat">
+        <strong>2.20.0</strong>
+        <span>versión TensorFlow</span>
+      </div>
+    </div>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>1. Metodología CRISP-ML aplicada</h2>
+      </div>
+
+      <div class="crisp">
+        <div class="fase" data-num="1">
+          <b>Comprensión del negocio</b>
+          <span>El objetivo fue clasificar imágenes automáticamente con una CNN.</span>
+        </div>
+
+        <div class="fase" data-num="2">
+          <b>Comprensión de datos</b>
+          <span>Se analizaron MNIST y Fashion-MNIST: tamaño, clases y estructura.</span>
+        </div>
+
+        <div class="fase" data-num="3">
+          <b>Preparación</b>
+          <span>Normalización de píxeles, reshape a 28×28×1 y one-hot encoding.</span>
+        </div>
+
+        <div class="fase" data-num="4">
+          <b>Modelado</b>
+          <span>Se construyó una CNN con Conv2D, MaxPooling, Flatten y Dense.</span>
+        </div>
+
+        <div class="fase" data-num="5">
+          <b>Evaluación</b>
+          <span>Se midió accuracy y loss en entrenamiento, validación y prueba.</span>
+        </div>
+
+        <div class="fase" data-num="6">
+          <b>Despliegue</b>
+          <span>Se realizó una prueba con imagen externa dentro del notebook.</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>2. Datasets utilizados</h2>
+      </div>
+
+      <div class="grid-2">
+        <article class="tarjeta">
+          <h3>MNIST</h3>
+          <p>
+            Dataset de dígitos escritos a mano. Contiene 60 000 imágenes de entrenamiento
+            y 10 000 imágenes de prueba. Cada imagen está en escala de grises con tamaño 28×28.
+          </p>
+
+          <div class="dataset-visual">
+            <div class="pixel-card">0</div>
+            <div class="pixel-card">1</div>
+            <div class="pixel-card">2</div>
+            <div class="pixel-card">3</div>
+            <div class="pixel-card">4</div>
+            <div class="pixel-card">5</div>
+            <div class="pixel-card">6</div>
+            <div class="pixel-card">7</div>
+            <div class="pixel-card">8</div>
+            <div class="pixel-card">9</div>
+          </div>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Fashion-MNIST</h3>
+          <p>
+            Dataset de prendas de vestir y accesorios. También contiene 60 000 imágenes de
+            entrenamiento y 10 000 de prueba, con 10 clases visuales.
+          </p>
+
+          <div class="dataset-visual">
+            <div class="fashion-card">👕</div>
+            <div class="fashion-card">👖</div>
+            <div class="fashion-card">🧥</div>
+            <div class="fashion-card">👗</div>
+            <div class="fashion-card">🥼</div>
+            <div class="fashion-card">👡</div>
+            <div class="fashion-card">👚</div>
+            <div class="fashion-card">👟</div>
+            <div class="fashion-card">👜</div>
+            <div class="fashion-card">🥾</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>3. Arquitectura CNN utilizada</h2>
+      </div>
+
+      <div class="arquitectura">
+        <div class="capa">
+          <b>Entrada</b>
+          <small>Imagen 28×28×1</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>Conv2D</b>
+          <small>32 filtros 3×3 + ReLU</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>MaxPooling</b>
+          <small>Reducción 2×2</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>Conv2D</b>
+          <small>64 filtros 3×3 + ReLU</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>Flatten</b>
+          <small>Aplanamiento</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>Dense</b>
+          <small>128 neuronas</small>
+        </div>
+
+        <div class="flecha">→</div>
+
+        <div class="capa">
+          <b>Softmax</b>
+          <small>10 clases</small>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>4. Resultados principales del Colab</h2>
+      </div>
+
+      <div class="grid-2">
+        <article class="tarjeta">
+          <h3>Modelo CNN para MNIST</h3>
+          <p>
+            El modelo tuvo un desempeño muy alto porque los dígitos tienen formas más diferenciadas.
+          </p>
+
+          <div class="resultado">
+            <div>
+              <div class="label">Accuracy de prueba</div>
+              <div class="numero">99.04%</div>
+            </div>
+            <div style="font-size:48px;">🏆</div>
+          </div>
+
+          <div class="barra verde">
+            <i style="width:99.04%;"></i>
+          </div>
+
+          <p style="margin-top:12px;">
+            <b>Loss:</b> 0.0293
+          </p>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Modelo CNN para Fashion-MNIST</h3>
+          <p>
+            El resultado fue bueno, aunque menor porque algunas prendas son visualmente parecidas.
+          </p>
+
+          <div class="resultado">
+            <div>
+              <div class="label">Accuracy de prueba</div>
+              <div class="numero">90.53%</div>
+            </div>
+            <div style="font-size:48px;">👕</div>
+          </div>
+
+          <div class="barra naranja">
+            <i style="width:90.53%;"></i>
+          </div>
+
+          <p style="margin-top:12px;">
+            <b>Loss:</b> 0.2585
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>5. Comparación final</h2>
+      </div>
+
+      <div class="tarjeta">
+        <table>
+          <thead>
+            <tr>
+              <th>Modelo</th>
+              <th>Dataset</th>
+              <th>Loss de prueba</th>
+              <th>Accuracy de prueba</th>
+              <th>Interpretación</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td>CNN MNIST</td>
+              <td>Dígitos manuscritos</td>
+              <td>0.0293</td>
+              <td>0.9904</td>
+              <td>Rendimiento muy alto; patrones simples y diferenciados.</td>
+            </tr>
+
+            <tr>
+              <td>CNN Fashion-MNIST</td>
+              <td>Artículos de moda</td>
+              <td>0.2585</td>
+              <td>0.9053</td>
+              <td>Rendimiento bueno; mayor dificultad por similitud entre prendas.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>6. Entrenamiento por épocas</h2>
+      </div>
+
+      <div class="grid-2">
+        <article class="tarjeta">
+          <h3>MNIST - Evolución</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Época</th>
+                <th>Accuracy</th>
+                <th>Loss</th>
+                <th>Val accuracy</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr><td>1</td><td>0.9508</td><td>0.1630</td><td>0.9830</td></tr>
+              <tr><td>2</td><td>0.9847</td><td>0.0510</td><td>0.9870</td></tr>
+              <tr><td>3</td><td>0.9891</td><td>0.0348</td><td>0.9893</td></tr>
+              <tr><td>4</td><td>0.9918</td><td>0.0259</td><td>0.9882</td></tr>
+              <tr><td>5</td><td>0.9935</td><td>0.0203</td><td>0.9904</td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Fashion-MNIST - Evolución</h3>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Época</th>
+                <th>Accuracy</th>
+                <th>Loss</th>
+                <th>Val accuracy</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr><td>1</td><td>0.8251</td><td>0.4873</td><td>0.8662</td></tr>
+              <tr><td>2</td><td>0.8842</td><td>0.3222</td><td>0.8852</td></tr>
+              <tr><td>3</td><td>0.8989</td><td>0.2767</td><td>0.8914</td></tr>
+              <tr><td>4</td><td>0.9103</td><td>0.2447</td><td>0.8986</td></tr>
+              <tr><td>5</td><td>0.9189</td><td>0.2184</td><td>0.9053</td></tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>7. Prueba con imagen externa</h2>
+      </div>
+
+      <div class="grid-2">
+        <article class="tarjeta">
+          <h3>Proceso realizado</h3>
+          <p>
+            La imagen externa fue convertida a escala de grises, redimensionada a 28×28 píxeles
+            y normalizada para que pueda ingresar al modelo Fashion-MNIST.
+          </p>
+
+          <div class="dataset-visual">
+            <div class="fashion-card">🖼️</div>
+            <div class="fashion-card">➡️</div>
+            <div class="fashion-card">⚫</div>
+            <div class="fashion-card">➡️</div>
+            <div class="fashion-card">28</div>
+          </div>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Predicción registrada</h3>
+
+          <div class="resultado">
+            <div>
+              <div class="label">Clase predicha</div>
+              <div class="numero">Bag</div>
+            </div>
+            <div style="font-size:55px;">👜</div>
+          </div>
+
+          <div class="barra">
+            <i style="width:48.49%;"></i>
+          </div>
+
+          <p style="margin-top:12px;">
+            Probabilidad aproximada: <b>48.49%</b>. El resultado debe interpretarse con cuidado,
+            porque las imágenes externas pueden ser diferentes al dominio del dataset.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="alerta">
+        <div class="alerta-icono">💡</div>
+
+        <div>
+          <h2 style="margin:0 0 8px;">Interpretación simple</h2>
+          <p style="margin:0; color:#64748b; line-height:1.6;">
+            La CNN funciona como un detector visual. Primero identifica bordes y formas pequeñas,
+            luego combina esos patrones para reconocer objetos completos.
+          </p>
+
+          <ul class="lista">
+            <li><b>MNIST</b> obtuvo mayor precisión porque los números son más fáciles de diferenciar.</li>
+            <li><b>Fashion-MNIST</b> fue más difícil porque varias prendas tienen formas similares.</li>
+            <li><b>CRISP-ML</b> ayudó a ordenar el trabajo desde el problema hasta la evaluación.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>8. Conclusiones</h2>
+      </div>
+
+      <div class="grid-3">
+        <article class="tarjeta">
+          <h3>Conclusión 1</h3>
+          <p>
+            La CNN logró clasificar correctamente ambos datasets, destacando mejor desempeño en MNIST.
+          </p>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Conclusión 2</h3>
+          <p>
+            Fashion-MNIST presentó mayor dificultad por la similitud visual entre algunas clases.
+          </p>
+        </article>
+
+        <article class="tarjeta">
+          <h3>Conclusión 3</h3>
+          <p>
+            Para mejorar el modelo se recomienda usar Dropout, data augmentation, más épocas y matriz de confusión.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="titulo-seccion">
+        <span class="punto"></span>
+        <h2>9. Código base resumido</h2>
+      </div>
+
+      <pre class="codigo"><code>import tensorflow as tf
+from tensorflow.keras import layers, models
+from tensorflow.keras.utils import to_categorical
+
+# Carga de datos
+(x_train, y_train), (x_test, y_test) = tf.keras.datasets.mnist.load_data()
+
+# Normalización
+x_train = x_train.astype("float32") / 255.0
+x_test = x_test.astype("float32") / 255.0
+
+# Reshape para CNN
+x_train = x_train.reshape(-1, 28, 28, 1)
+x_test = x_test.reshape(-1, 28, 28, 1)
+
+# One-hot encoding
+y_train = to_categorical(y_train, 10)
+y_test = to_categorical(y_test, 10)
+
+# Modelo CNN
+model = models.Sequential([
+    layers.Conv2D(32, (3,3), activation="relu", input_shape=(28,28,1)),
+    layers.MaxPooling2D((2,2)),
+    layers.Conv2D(64, (3,3), activation="relu"),
+    layers.MaxPooling2D((2,2)),
+    layers.Flatten(),
+    layers.Dense(128, activation="relu"),
+    layers.Dense(10, activation="softmax")
+])
+
+model.compile(
+    optimizer="adam",
+    loss="categorical_crossentropy",
+    metrics=["accuracy"]
+)
+
+history = model.fit(
+    x_train, y_train,
+    epochs=5,
+    validation_data=(x_test, y_test)
+)
+
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print("Loss:", test_loss)
+print("Accuracy:", test_acc)</code></pre>
+    </section>
+
+    <div class="pie">
+      Infografía HTML basada en el notebook de Colab: TALLER_3_2_CNN_APUS_TEAM.ipynb | CNN con MNIST y Fashion-MNIST
+    </div>
+
+  </main>
+
+</body>
+</html>
